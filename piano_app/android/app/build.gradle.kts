@@ -1,4 +1,4 @@
-import java.util.Properties  // Add this import statement at the top
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "com.example.piano_app"
     compileSdk = flutter.compileSdkVersion
-    
+
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -19,6 +19,16 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+
+    // Load keystore properties
+    val keystoreProperties = Properties().apply {
+        val keystoreFile = rootProject.file("android/key.properties")
+        if (keystoreFile.exists()) {
+            load(keystoreFile.inputStream())
+        } else {
+            println("Warning: 'key.properties' not found. Release signing will be skipped.")
+        }
     }
 
     defaultConfig {
@@ -31,30 +41,25 @@ android {
 
     signingConfigs {
         create("release") {
-            val keyPropertiesFile = rootProject.file("android/key.properties")
-
-            if (keyPropertiesFile.exists()) {
-                val properties = Properties()
-                properties.load(keyPropertiesFile.inputStream())
-
-                storeFile = file(properties["storeFile"] as String)
-                storePassword = properties["storePassword"] as String
-                keyAlias = properties["keyAlias"] as String
-                keyPassword = properties["keyPassword"] as String
-            } else {
-                // Do not throw error in debug mode
-                println("Warning: 'key.properties' not found. Release signing will be skipped.")
+            val storeFilePath = keystoreProperties["storeFile"] as? String
+            if (!storeFilePath.isNullOrBlank()) {
+                storeFile = file(storeFilePath)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
             }
         }
     }
 
     buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("release")
-            // ProGuard settings for release build
+        getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }

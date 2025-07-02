@@ -31,19 +31,19 @@ android {
 
     signingConfigs {
         create("release") {
-            val keyProperties = rootProject.file("android/key.properties")
+            val keyPropertiesFile = rootProject.file("android/key.properties")
 
-            // Ensure the key.properties file exists and load the values from it
-            if (keyProperties.exists()) {
-                val properties = Properties() // Now this works after importing Properties
-                properties.load(keyProperties.inputStream())
+            if (keyPropertiesFile.exists()) {
+                val properties = Properties()
+                properties.load(keyPropertiesFile.inputStream())
 
                 storeFile = file(properties["storeFile"] as String)
                 storePassword = properties["storePassword"] as String
                 keyAlias = properties["keyAlias"] as String
                 keyPassword = properties["keyPassword"] as String
             } else {
-                throw GradleException("Key properties file not found!")
+                // Do not throw error in debug mode
+                println("Warning: 'key.properties' not found. Release signing will be skipped.")
             }
         }
     }

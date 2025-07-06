@@ -10,68 +10,20 @@ void main() {
   ]).then((_) => runApp(PianoApp()));
 }
 
-class PianoApp extends StatefulWidget {
-  @override
-  _PianoAppState createState() => _PianoAppState();
-}
-
-class _PianoAppState extends State<PianoApp> {
+class PianoApp extends StatelessWidget {
   final player = AudioPlayer();
-  Map<String, bool> keyPressed = {
-    'C1': false,
-    'D1': false,
-    'E1': false,
-    'F1': false,
-    'G1': false,
-    'A1': false,
-    'B1': false,
-  };
 
   void playNote(String fileName) {
     player.play(AssetSource(fileName));
   }
 
-  void handleKeyPress(String keyLabel, bool isPressed) {
-    setState(() {
-      keyPressed[keyLabel] = isPressed;
-    });
-  }
-
   Widget buildWhiteKey(String label, String fileName) {
     return Expanded(
       child: GestureDetector(
-        onTapDown: (_) {
-          handleKeyPress(label, true); // Key pressed down
-          playNote(fileName);
-        },
-        onTapUp: (_) {
-          handleKeyPress(label, false); // Key released
-        },
-        onTapCancel: () {
-          handleKeyPress(label, false); // Cancel if tap is interrupted
-        },
+        onTap: () => playNote(fileName),
         child: Container(
-          margin: const EdgeInsets.all(2),
-          decoration: BoxDecoration(
-            color: keyPressed[label]! ? Colors.grey.shade400 : Colors.white, // Change color when pressed
-            borderRadius: BorderRadius.circular(6),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.6),
-                spreadRadius: 2,
-                blurRadius: 4,
-                offset: Offset(0, 2),
-              ),
-            ],
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                keyPressed[label]! ? Colors.grey.shade500 : Colors.white,
-                keyPressed[label]! ? Colors.grey.shade300 : Colors.grey.shade200,
-              ], // Gradient when key is pressed
-            ),
-          ),
+          margin: const EdgeInsets.all(1),
+          color: Colors.white,
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -103,26 +55,12 @@ class _PianoAppState extends State<PianoApp> {
       width: keyWidth / 2,
       height: 140,
       child: GestureDetector(
-        onTapDown: (_) {
-          playNote(fileName);
-        },
+        onTap: () => playNote(fileName),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.black,
-            borderRadius: BorderRadius.circular(6),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.7),
-                spreadRadius: 2,
-                blurRadius: 6,
-                offset: Offset(0, 3),
-              ),
-            ],
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.black, Colors.grey.shade900],
-            ),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.black),
           ),
           alignment: Alignment.bottomCenter,
           child: Padding(
@@ -146,7 +84,7 @@ class _PianoAppState extends State<PianoApp> {
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final whiteKeyCount = 7;  // Adjusted for 7 keys instead of 8
+              final whiteKeyCount = 8;
               final keyWidth = constraints.maxWidth / whiteKeyCount;
 
               return Stack(
@@ -161,6 +99,7 @@ class _PianoAppState extends State<PianoApp> {
                       buildWhiteKey('G1', 'g1.wav'),
                       buildWhiteKey('A1', 'a1.wav'),
                       buildWhiteKey('B1', 'b1.wav'),
+                      buildWhiteKey('C2', 'c2.wav'),
                     ],
                   ),
                   // Positioned black keys

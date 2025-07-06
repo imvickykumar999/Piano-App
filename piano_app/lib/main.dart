@@ -17,15 +17,16 @@ class PianoApp extends StatefulWidget {
 
 class _PianoAppState extends State<PianoApp> {
   final player = AudioPlayer();
-  Map<String, bool> keyPressed = {
-    'C1': false,
-    'D1': false,
-    'E1': false,
-    'F1': false,
-    'G1': false,
-    'A1': false,
-    'B1': false,
-  };
+Map<String, bool> keyPressed = {
+  'C1': false,
+  'D1': false,
+  'E1': false,
+  'F1': false,
+  'G1': false,
+  'A1': false,
+  'B1': false,
+  'C2': false, // ✅ Add this line
+};
 
   void playNote(String fileName) {
     player.play(AssetSource(fileName));

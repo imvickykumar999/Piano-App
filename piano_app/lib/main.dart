@@ -84,7 +84,7 @@ class PianoApp extends StatelessWidget {
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final whiteKeyCount = 7;
+              final whiteKeyCount = 8;
               final keyWidth = constraints.maxWidth / whiteKeyCount;
 
               return Stack(
@@ -99,6 +99,7 @@ class PianoApp extends StatelessWidget {
                       buildWhiteKey('G1', 'g1.wav'),
                       buildWhiteKey('A1', 'a1.wav'),
                       buildWhiteKey('B1', 'b1.wav'),
+                      buildWhiteKey('C2', 'c2.wav'),
                     ],
                   ),
                   // Positioned black keys
